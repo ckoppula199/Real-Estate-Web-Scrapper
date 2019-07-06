@@ -56,8 +56,15 @@ for page in range(0, 41*24, 24):
             added_or_reduced.append(item.find('span', {'data-bind':"text: addedOrReduced, css: {'propertyCard-contactsAddedOrReduced--recent': isRecent}"}).text)
 
 
+        # finds the link to the property
         links = thing.find_all('div', {"class":"propertyCard-details"})
         for link in links:
             for link1 in link.find_all('a'):
                 if link1.has_attr('href'):
                     link_to_property.append("https://www.rightmove.co.uk" + link1.attrs['href'])
+
+        # finds the address of the property
+        addresses = thing.find_all("address",{"class":"propertyCard-address"})
+        for item in addresses:
+            #print(item.find('span', {"data-bind":"text: displayAddress"}).text)
+            address.append(item.find('span', {"data-bind":"text: displayAddress"}).text)
