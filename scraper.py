@@ -68,3 +68,18 @@ for page in range(0, 41*24, 24):
         for item in addresses:
             #print(item.find('span', {"data-bind":"text: displayAddress"}).text)
             address.append(item.find('span', {"data-bind":"text: displayAddress"}).text)
+
+#creates a list of rows
+lst = []
+zipped = zip(price_per_month, price_per_week, address, addedOrReduced, link_to_property, good_price)
+for i in zipped:
+    lst.append(i)
+
+
+#creates a pandas DataFrame and converts it to a csv file
+df = pandas.DataFrame(lst)
+df.columns = ["PPM", 'PPW', "Address", "Added/Reduced Date", "Link", "Good Price"]
+is_good_price = df['Good Price'] == True
+dfFinal = df[is_good_price]
+dfFinal.to_csv("Places.csv")
+print("Finished")
