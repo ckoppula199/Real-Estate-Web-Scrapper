@@ -42,7 +42,7 @@ for page in range(0, 41*24, 24):
         for item in prices:
             money = item.find('span', {"class":"propertyCard-priceValue"}).text
             ppm = Decimal(sub(r'[^\d.]', '', money))
-            ppw = round((value * 12)/ 52)
+            ppw = round((ppm * 12)/ 52)
             if ppw > 580:
                 good_price.append(False)
             else:
@@ -51,27 +51,27 @@ for page in range(0, 41*24, 24):
             price_per_month.append(ppm)
 
         #finds out when the property was added or reduced
-        added = thing.find_all("div", {"class":"propertyCard-contacts"})
+        added = property.find_all("div", {"class":"propertyCard-contacts"})
         for item in added:
             added_or_reduced.append(item.find('span', {'data-bind':"text: addedOrReduced, css: {'propertyCard-contactsAddedOrReduced--recent': isRecent}"}).text)
 
 
         # finds the link to the property
-        links = thing.find_all('div', {"class":"propertyCard-details"})
+        links = property.find_all('div', {"class":"propertyCard-details"})
         for link in links:
             for link1 in link.find_all('a'):
                 if link1.has_attr('href'):
                     link_to_property.append("https://www.rightmove.co.uk" + link1.attrs['href'])
 
         # finds the address of the property
-        addresses = thing.find_all("address",{"class":"propertyCard-address"})
+        addresses = property.find_all("address",{"class":"propertyCard-address"})
         for item in addresses:
             #print(item.find('span', {"data-bind":"text: displayAddress"}).text)
             address.append(item.find('span', {"data-bind":"text: displayAddress"}).text)
 
 #creates a list of rows
 lst = []
-zipped = zip(price_per_month, price_per_week, address, addedOrReduced, link_to_property, good_price)
+zipped = zip(price_per_month, price_per_week, address, added_or_reduced, link_to_property, good_price)
 for i in zipped:
     lst.append(i)
 
@@ -79,7 +79,7 @@ for i in zipped:
 #creates a pandas DataFrame and converts it to a csv file
 df = pandas.DataFrame(lst)
 df.columns = ["PPM", 'PPW', "Address", "Added/Reduced Date", "Link", "Good Price"]
-is_good_price = df['Good Price'] == True
+is_good_price = df['Good Price'] == True #checks to see if the property meets the requirements
 dfFinal = df[is_good_price]
 dfFinal.to_csv("Places.csv")
 print("Finished")
