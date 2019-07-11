@@ -27,7 +27,7 @@ good_location = []
 
 #there are 40 pages on the website and the pagination index increments by 24 each time
 for page in range(0, 41*24, 24):
-    print("Finished inspecting: " + baseURLpt1 + str(page) + baseURLpt2)
+    print("Scrapping: " + baseURLpt1 + str(page) + baseURLpt2)
     r=requests.get(baseURLpt1 + str(page) + baseURLpt2, headers = headers)
     c = r.content
     soup = BeautifulSoup(c, "html.parser")
@@ -67,7 +67,6 @@ for page in range(0, 41*24, 24):
         # finds the address of the property
         addresses = property.find_all("address",{"class":"propertyCard-address"})
         for item in addresses:
-            #print(item.find('span', {"data-bind":"text: displayAddress"}).text)
             property_address = item.find('span', {"data-bind":"text: displayAddress"}).text
             if "NW1" in property_address:
                 good_location.append(True)
@@ -87,7 +86,7 @@ df = pandas.DataFrame(lst)
 df.columns = ["PPM", 'PPW', "Address", "Added/Reduced Date", "Link", "Good Price", "Good Location"]
 is_good_price = df['Good Price'] == True #checks to see if the property meets the requirements
 df1 = df[is_good_price]
-is_good_location = df1['Good Location'] == True
+is_good_location = df1['Good Location'] == True #checks to see if the property meets the requirements
 dfFinal = df1[is_good_location]
 dfFinal.to_csv("Places.csv")
 print("Finished")
